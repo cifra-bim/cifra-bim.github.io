@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Цифра · ЦИМ АГР</title>
+<meta name="description" content="«Цифра» — BIM и цифровизация строительства: ЦИМ АГР в формате IFC, модели Revit по документации, плагины и семейства Revit, автоматизация бизнес-процессов.">
+<meta property="og:title" content="Цифра — BIM и цифровизация строительства">
+<meta property="og:description" content="ЦИМ АГР, модели и плагины Revit, автоматизация.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f3ece2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;700&display=swap">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233a3128'/%3E%3Cg fill='%23f3ece2'%3E%3Crect x='14' y='23' width='12' height='44'/%3E%3Crect x='46' y='23' width='12' height='44'/%3E%3Crect x='14' y='56' width='53' height='11'/%3E%3Crect x='58' y='56' width='9' height='23'/%3E%3C/g%3E%3Crect x='71' y='54' width='13' height='13' fill='%23cfab86'/%3E%3C/svg%3E">
+<style>
+/* Layout: calm business card - hero with a live model that assembles and gets checked floor by floor, then short blocks separated by air and hairlines. Palette: Sand: warm beige with brown accent. */
+:root{
+  --paper:#fcfaf6; --wash:#f3ece2; --ink:#3a3128; --muted:#74685b; --accent:#8b6a48; --accent-hover:#6f5236; --on-accent:#ffffff;
+  --line:#e3d9cb; --select:#e9dcc8; --stub:#f3ecd2; --stub-ink:#5d4c14;
+  --band:#ebe2d5; --band-ink:#3a3128; --band-muted:#74685b; --band-line:#dcceba; --band-card:#fdfbf8; --band-card-hover:#f7f2ea; --band-accent:#8b6a48;
+  --f:"Golos Text",Arial,Helvetica,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#191612; --wash:#221d18; --ink:#eee6db; --muted:#b5a895; --accent:#cfab86; --accent-hover:#e0c09e; --on-accent:#1a1612;
+  --line:#3a3129; --select:#4b3d2f; --stub:#3a3420; --stub-ink:#eadba0;
+  --band:#1e1915; --band-ink:#eee6db; --band-muted:#b5a895; --band-line:#3a3129; --band-card:#26201b; --band-card-hover:#2c2520; --band-accent:#cfab86; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#191612; --wash:#221d18; --ink:#eee6db; --muted:#b5a895; --accent:#cfab86; --accent-hover:#e0c09e; --on-accent:#1a1612;
+  --line:#3a3129; --select:#4b3d2f; --stub:#3a3420; --stub-ink:#eadba0;
+  --band:#1e1915; --band-ink:#eee6db; --band-muted:#b5a895; --band-line:#3a3129; --band-card:#26201b; --band-card-hover:#2c2520; --band-accent:#cfab86; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--f);padding-inline:0;padding-block:0}
+h1,h2,h3,p,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--select)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.shell{width:min(100% - 96px,1180px);margin-inline:auto}
+.label{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.stub{background:var(--stub);color:var(--stub-ink);padding:0 4px;white-space:nowrap}
+h2{font-size:clamp(28px,3vw,40px);line-height:1.12;font-weight:400;letter-spacing:-.04em;text-wrap:balance}
+h3{font-size:19px;line-height:1.3;font-weight:500;letter-spacing:-.01em}
+
+/* header */
+header .shell{display:flex;align-items:center;gap:24px;min-height:96px}
+/* optical alignment: descriptor ink box matches the wordmark ink box — top of «Б» at top of «ф»,
+   descenders of the last line level with the deeper descenders of «ц» and «р» (hence the nudge down) */
+.brand{display:flex;align-items:last baseline;gap:20px}
+.brand b{font-size:39px;font-weight:700;letter-spacing:-.055em;line-height:1;white-space:nowrap}
+.brand .dot{display:inline-block;width:.16em;height:.16em;background:var(--accent);margin-left:.06em}
+.brand>span{font-size:14px;line-height:1.2;color:var(--muted);position:relative;top:.26em}
+header nav{display:flex;gap:32px;margin-left:auto;font-size:16px}
+header nav a:hover{color:var(--accent)}
+header nav a:last-child{border-bottom:1px solid currentColor}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:24px;align-items:center;background:var(--wash);padding:56px}
+.hero h1{font-size:clamp(40px,5vw,64px);line-height:1.06;letter-spacing:-.05em;font-weight:400;text-wrap:balance}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:19px;color:var(--muted);max-width:30em;margin-top:24px}
+.btn{display:inline-flex;align-items:center;min-height:50px;padding:0 26px;margin-top:32px;background:var(--accent);color:var(--on-accent);font-weight:500;font-size:16px;transition:background .15s}
+.btn:hover{background:var(--accent-hover)}
+.model{margin:0;min-width:0;height:400px}
+.model canvas{width:100%;height:100%;display:block}
+
+/* blocks */
+.block{padding-block:88px 0}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px}
+.split>div>p{color:var(--muted);margin-top:18px;max-width:32em}
+.list li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line)}
+.list li:first-child{border-top:1px solid var(--line)}
+.list li::before{content:"";flex:none;width:14px;height:1px;background:var(--accent);transform:translateY(-5px)}
+
+.cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:32px}
+.cols li{border-top:1px solid var(--line);padding-top:16px;min-width:0}
+.cols p{font-size:15.5px;color:var(--muted);margin-top:6px}
+.cols.steps li{border-top-color:var(--ink)}
+.cols .n{display:block;font-size:14px;color:var(--accent);margin-bottom:10px}
+.cases li{background:var(--wash);border-top:0;padding:22px 22px 24px}
+
+.svc-band{background:var(--band);color:var(--band-ink);padding:56px;margin-top:88px}
+.svc-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:56px;align-items:end}
+.svc-head .label{grid-column:1/-1;color:var(--band-muted);margin-bottom:14px}
+.svc-head>p:last-child{color:var(--band-muted);max-width:30em}
+.svc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px}
+.svc-grid li{background:var(--band-card);padding:26px 24px 28px;min-width:0;transition:background .2s}
+.svc-grid li:hover{background:var(--band-card-hover)}
+.svc-grid svg{width:32px;height:32px;fill:none;stroke:var(--band-accent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;display:block;margin-bottom:22px}
+.svc-grid h3{font-size:20px;line-height:1.25}
+.svc-grid p{font-size:15.5px;color:var(--band-muted);margin-top:8px}
+.svc-cta{display:inline-flex;margin-top:32px;color:var(--band-ink);border-bottom:1px solid var(--band-accent);padding-bottom:2px}
+.svc-cta:hover{color:var(--band-accent)}
+.about{background:var(--wash);padding:48px 56px;margin-top:88px;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px}
+.about .lead{font-size:clamp(20px,2vw,24px);line-height:1.4;letter-spacing:-.02em}
+.about .lead+p{color:var(--muted);margin-top:14px}
+
+.faq{margin-top:28px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:20px 0;font-size:19px;letter-spacing:-.01em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";flex:none;width:12px;height:12px;border-right:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(45deg) translateY(-4px);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
+.faq summary:hover{color:var(--accent)}
+.faq details p{color:var(--muted);padding:0 0 22px;max-width:46em}
+
+.contacts{padding-block:88px 64px}
+.need{margin-top:24px;display:grid;gap:8px;font-size:16px}
+.need li::before{content:"— ";color:var(--accent)}
+.ways{display:grid;align-content:start}
+.ways div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);font-size:21px}
+.ways div:first-child{border-top:1px solid var(--line)}
+.ways small{font-size:14px;color:var(--muted)}
+.ways .mail{overflow-wrap:anywhere}
+.ways .mail:hover{color:var(--accent)}
+
+footer .shell{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 32px;padding-block:28px 36px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+footer .brand b{font-size:32px;color:var(--ink)}
+footer .brand>span{font-size:12px}
+footer .brand{gap:16px}
+
+@media (max-width:960px){.cols{grid-template-columns:1fr 1fr;row-gap:28px}.cases{row-gap:16px;column-gap:16px}.svc-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:860px){
+  .shell{width:calc(100% - 40px)}
+  header nav a:not(:last-child){display:none}
+  .hero{grid-template-columns:1fr;padding:36px 24px 16px}
+  .model{height:320px}
+  .split,.about{grid-template-columns:1fr;gap:28px}
+  .about{padding:36px 24px}
+  .svc-band{padding:40px 24px;margin-top:64px}.svc-head{grid-template-columns:1fr;row-gap:14px}
+  .block{padding-block:64px 0}.about{margin-top:64px}.contacts{padding-block:64px 48px}
+}
+@media (max-width:520px){
+  .shell{width:calc(100% - 32px)}
+  .hero,.about,.svc-band{margin-inline:-16px}
+  .svc-grid{grid-template-columns:1fr}
+  .brand>span{display:none}
+  .cols{grid-template-columns:1fr}
+  .ways div{font-size:18px;flex-wrap:wrap}
+  .faq summary{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.faq summary::after{transition:none}}
+</style>
+<link rel="icon" type="image/png" sizes="32x32" href="cifra-icon-32.png">
+<link rel="apple-touch-icon" href="cifra-icon-180.png">
+</head>
+<body>
+
+<header><div class="shell">
+  <a class="brand" href="#top" aria-label="Цифра — на главную"><b>цифра<span class="dot" aria-hidden="true"></span></b><span>BIM и цифровизация<br>строительства</span></a>
+  <nav aria-label="Разделы"><a href="#agr">ЦИМ АГР</a><a href="#services">Услуги</a><a href="#about">О компании</a><a href="#contacts">Связаться</a></nav>
+</div></header>
+
+<main id="top" class="shell">
+  <section class="hero" id="hero" aria-labelledby="h1">
+    <div>
+      <h1 id="h1">ЦИМ АГР<br><span>и BIM-модели</span></h1>
+      <p>Готовим информационные модели для согласования АГР по вашим архитектурным решениям. Разрабатываем инструменты для Revit.</p>
+      <a class="btn" href="#contacts">Обсудить объект</a>
+    </div>
+    <figure class="model" aria-label="Анимация: объём башни закручивается, получает фасады и атрибуты IFC"><canvas id="cv"></canvas></figure>
+  </section>
+
+  <section id="agr" class="block split" aria-labelledby="h-agr">
+    <div>
+      <p class="label" style="margin:0 0 14px">Основное направление</p>
+      <h2 id="h-agr">ЦИМ АГР в формате IFC</h2>
+      <p>Разрабатываем модель с нуля или дорабатываем вашу модель Revit, чтобы она прошла проверку при подаче. Работаем по DWG, PDF или готовой модели.</p>
+    </div>
+    <div>
+      <ul class="list">
+        <li>Анализ исходных материалов и перечень недостающих данных</li>
+        <li>Модель с геометрией и атрибутами по действующим требованиям</li>
+        <li>Проверка модели перед передачей</li>
+        <li>Комплект файлов для загрузки</li>
+        <li>Исправление замечаний к нашей работе</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-cases">
+    <h2 id="h-cases">Когда к нам обращаются</h2>
+    <ul class="cols cases">
+      <li><h3>Подача скоро, а модели нет</h3><p>Скажем, какой срок реален, и начнём с того, что уже готово.</p></li>
+      <li><h3>Модель не проходит требования</h3><p>Проверим вашу модель и составим перечень доработок.</p></li>
+      <li><h3>Пришли замечания комиссии</h3><p>Разберём замечания и внесём исправления в модель.</p></li>
+      <li><h3>Своя команда загружена</h3><p>Возьмём модель целиком и согласуем график обмена файлами.</p></li>
+    </ul>
+  </section>
+
+  <section class="block" aria-labelledby="h-steps">
+    <h2 id="h-steps">Как работаем</h2>
+    <ol class="cols steps">
+      <li><span class="n">1</span><h3>Заявка</h3><p>Вы описываете объект и срок подачи.</p></li>
+      <li><span class="n">2</span><h3>Оценка</h3><p>Смотрим материалы, называем состав работ, срок и стоимость.</p></li>
+      <li><span class="n">3</span><h3>Модель</h3><p>Готовим и проверяем модель по договору.</p></li>
+      <li><span class="n">4</span><h3>Передача</h3><p>Передаём комплект и остаёмся на связи до замечаний.</p></li>
+    </ol>
+  </section>
+
+  <section id="services" class="svc-band" aria-labelledby="h-svc">
+    <div class="svc-head">
+      <p class="label">Другие направления</p>
+      <h2 id="h-svc">Revit и автоматизация</h2>
+      <p>Делаем модели, инструменты и автоматизацию для проектных команд, девелоперов и производителей.</p>
+    </div>
+    <ul class="svc-grid">
+      <li>
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 4h13l7 7v17H6z"/><path d="M19 4v7h7"/><path d="M11 22l5-3 5 3-5 3z"/><path d="M11 22v-5l5-3 5 3v5"/></svg>
+        <h3>Модели Revit по документации</h3><p>Переносим решения из DWG и PDF в Revit с нужной детализацией.</p></li>
+      <li>
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M11 9l-7 7 7 7"/><path d="M21 9l7 7-7 7"/><path d="M18 6l-4 20"/></svg>
+        <h3>Плагины для Revit</h3><p>Автоматизируем параметры, проверки, расчёты и оформление.</p></li>
+      <li>
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="9" width="17" height="17"/><path d="M4 9v17"/><path d="M2.5 9h3M2.5 26h3"/><path d="M9 4h17"/><path d="M9 2.5v3M26 2.5v3"/></svg>
+        <h3>Параметрические семейства</h3><p>Под стандарт проектной команды или каталог производителя.</p></li>
+      <li>
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M26 12a10 10 0 0 0-18-3"/><path d="M8 4v5h5"/><path d="M6 20a10 10 0 0 0 18 3"/><path d="M24 28v-5h-5"/></svg>
+        <h3>Автоматизация процессов</h3><p>Документы, передача данных и отчётность без ручной рутины.</p></li>
+    </ul>
+    <a class="svc-cta" href="#contacts">Обсудить задачу</a>
+  </section>
+
+  <section id="about" class="about" aria-labelledby="h-about">
+    <h2 id="h-about">О компании</h2>
+    <div>
+      <p class="lead">Мы работали на стороне девелоперов и в промышленном проектировании, поэтому знаем, как модель принимают и что с ней происходит дальше.</p>
+      <p>В команде есть и BIM-специалисты, и разработчики. Поэтому часть проверок модели мы делаем своими инструментами, а не вручную.</p>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-faq">
+    <h2 id="h-faq">Частые вопросы</h2>
+    <div class="faq">
+      <details><summary>Нужна ли модель Revit, чтобы начать?</summary><p>Нет. Работаем по DWG и PDF. Если модель Revit есть, используем её как основу, это ускоряет работу.</p></details>
+      <details><summary>Можно ли начать, пока проект дорабатывается?</summary><p>Да. Начнём с готовых разделов и договоримся, как будем вносить изменения.</p></details>
+      <details><summary>Гарантируете ли вы получение свидетельства АГР?</summary><p>Решение принимает комиссия. Мы отвечаем за модель: её соответствие требованиям и исправление замечаний к нашей работе.</p></details>
+      <details><summary>Как оформляется работа?</summary><p>По договору. Состав работ, сроки и результат фиксируем до старта.</p></details>
+    </div>
+  </section>
+
+  <section id="contacts" class="contacts" aria-labelledby="h-c">
+    <div class="split">
+      <div>
+        <h2 id="h-c">Связаться</h2>
+        <p>Напишите на почту или в Telegram. Для оценки пригодится:</p>
+        <ul class="need">
+          <li>описание объекта</li>
+          <li>исходные материалы: DWG, PDF или модель Revit</li>
+          <li>желаемый срок</li>
+        </ul>
+      </div>
+      <div class="ways">
+        <div><a class="mail" href="mailto:cifra.bim@gmail.com">cifra.bim@gmail.com</a><small>Почта</small></div>
+        <div><a class="mail" href="https://t.me/ciifra_bim" target="_blank" rel="noopener">@ciifra_bim</a><small>Telegram</small></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="shell">
+  <a class="brand" href="#top" aria-label="Цифра — наверх"><b>цифра<span class="dot" aria-hidden="true"></span></b><span>BIM и цифровизация<br>строительства</span></a>
+  <span class="copy">© 2026</span></div></footer>
+
+<script>
+/* Hero model, one story on a loop:
+   1) a plain massing box (podium + tower) rises;
+   2) a check plane sweeps up: below it each storey twists into place and gets a curtain wall,
+      an IfcBuildingStorey call-out rides with the plane, IFC property call-outs pin to the tower;
+   3) roof parapet, hold; 4) the tower untwists back into the box. */
+(function(){
+  const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),root=document.documentElement,hero=document.getElementById('hero');
+  // podium: 2 storeys; tower: 22 storeys of 3.05 m, square plate, 75° total twist
+  const PX=17,PY=12,PF=4.5,PH=9, R=8.6, N=22, FH=3.05, TOP=PH+N*FH, TW=75*Math.PI/180;
+  const TAGS=[
+    {z:3.5, set:'Pset_BuildingCommon', val:'OccupancyType = Residential'},
+    {z:PH+FH*10, set:'Pset_BuildingCommon', val:'NumberOfStoreys = 24'},
+    {z:TOP, set:'Qto_BuildingBaseQuantities', val:'Height = '+TOP.toFixed(2)}
+  ];
+  const GROW=1400, HOLD0=900, SWEEP=5600, HOLD1=5000, FADE=1700, LOOP=HOLD0+SWEEP+HOLD1+FADE, END=TOP+18;
+  const clamp=v=>Math.min(1,Math.max(0,v)), ease=t=>1-Math.pow(1-clamp(t),3), easeIO=t=>{t=clamp(t);return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2};
+  const LX=-.55, LY=.83; // light direction in plan
+  let W=0,H=0;
+  function size(){const d=Math.min(2,devicePixelRatio||1),r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0)}
+
+  function state(t){
+    if(reduce) return {h:TOP,scan:END,dA:1,stage:2};
+    if(t<GROW) return {h:ease(t/GROW)*TOP,scan:0,dA:1,stage:0};
+    const c=(t-GROW)%LOOP;
+    if(c<HOLD0) return {h:TOP,scan:0,dA:1,stage:0};
+    if(c<HOLD0+SWEEP) return {h:TOP,scan:easeIO((c-HOLD0)/SWEEP)*END,dA:1,stage:1};
+    if(c<HOLD0+SWEEP+HOLD1) return {h:TOP,scan:END,dA:1,stage:2};
+    return {h:TOP,scan:END,dA:1-ease((c-HOLD0-SWEEP-HOLD1)/FADE),stage:3};
+  }
+
+  function frame(time,wob){
+    const cs=getComputedStyle(root),C={acc:cs.getPropertyValue('--accent').trim(),ink:cs.getPropertyValue('--ink').trim(),line:cs.getPropertyValue('--line').trim(),paper:cs.getPropertyValue('--paper').trim(),muted:cs.getPropertyValue('--muted').trim()};
+    const S=state(time);
+    ctx.clearRect(0,0,W,H);
+    const a=.62+wob, ph=.46, ca=Math.cos(a),sa=Math.sin(a),cp=Math.cos(ph),sp=Math.sin(ph);
+    const small=W<440, fs=small?10:11.5, fsS=small?9.5:10.5;
+    const FM='500 '+fs+'px ui-monospace,"SF Mono",Consolas,monospace', FS='400 '+fsS+'px "Golos Text",Arial,sans-serif';
+    ctx.font=FM;
+    let labelW=Math.max(...TAGS.map(g=>ctx.measureText(g.val).width));
+    ctx.font=FS;labelW=Math.max(labelW,...TAGS.map(g=>ctx.measureText(g.set).width))+28;
+    const s=Math.max(1.6,Math.min(H/100,(W-labelW-36)/44)), ox=Math.min(W*.42,W-21*s-labelW-22), oy=H*.5+36*s;
+    const D=(x,y)=>x*sa+y*ca;
+    const P=(x,y,z)=>[ox+(x*ca-y*sa)*s, oy-z*cp*s+D(x,y)*sp*s];
+    const path=pts=>{ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath()};
+    const poly=(pts,fill,al)=>{if(al<=0)return;ctx.globalAlpha=al;ctx.fillStyle=fill;path(pts);ctx.fill()};
+    const strokeP=(pts,col,w,al)=>{if(al<=0)return;ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=w;path(pts);ctx.stroke()};
+    const line=(p,q,col,w,al)=>{if(al<=0)return;ctx.globalAlpha=al;ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke()};
+    const corners=(hx,hy,rot)=>{const c=Math.cos(rot),n=Math.sin(rot);return[[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]].map(([x,y])=>[x*c-y*n,x*n+y*c])};
+
+    // one storey (or a merged massing block) as a prism
+    function prism(hx,hy,rot,zb,zt,det,glassStep,topA){
+      const cn=corners(hx,hy,rot), c=Math.cos(rot), n=Math.sin(rot);
+      const normals=[[0,-1],[1,0],[0,1],[-1,0]].map(([x,y])=>[x*c-y*n,x*n+y*c]);
+      const visF=[];
+      for(let i=0;i<4;i++){
+        const nv=normals[i]; if(nv[0]*sa+nv[1]*ca<=0.001) continue; visF.push(i);
+        const A=cn[i],B=cn[(i+1)%4],L=Math.hypot(B[0]-A[0],B[1]-A[1]);
+        const lit=clamp(.5+.5*(nv[0]*LX+nv[1]*LY));
+        const Q=[P(A[0],A[1],zb),P(B[0],B[1],zb),P(B[0],B[1],zt),P(A[0],A[1],zt)];
+        poly(Q,C.acc,.10+.10*(1-lit));
+        if(det>0){
+          poly(Q,C.paper,.93*det);poly(Q,C.acc,(.04+.13*(1-lit))*det);
+          const on=(u,z)=>{const k=u/L;return P(A[0]+(B[0]-A[0])*k,A[1]+(B[1]-A[1])*k,z)};
+          const g0=zb+.35,g1=zt-.3;
+          poly([on(.3,g0),on(L-.3,g0),on(L-.3,g1),on(.3,g1)],C.acc,(.30+.14*(1-lit))*det);
+          const m=Math.max(2,Math.round(L/glassStep));for(let j=1;j<m;j++){const u=.3+(L-.6)*j/m;line(on(u,g0),on(u,g1),C.paper,.8,.75*det)}
+          line(Q[2],Q[3],C.acc,.9,.6*det);
+        }
+      }
+      // vertical edges at corners touching a visible face
+      for(let i=0;i<4;i++){const adj=visF.includes(i)||visF.includes((i+3)%4);if(adj)line(P(cn[i][0],cn[i][1],zb),P(cn[i][0],cn[i][1],zt),C.acc,1.2,1)}
+      const T=cn.map(p=>P(p[0],p[1],zt));
+      poly(T,C.acc,.14);
+      if(det>0){poly(T,C.paper,.9*det);poly(T,C.acc,.06*det)}
+      strokeP(T,C.acc,1.1,topA);
+      return cn;
+    }
+
+    // ground grid fading to the edges
+    ctx.save();
+    for(let g=-32;g<=32;g+=5.3){line(P(g,-32,0),P(g,32,0),C.line,1,1);line(P(-32,g,0),P(32,g,0),C.line,1,1)}
+    ctx.globalAlpha=1;ctx.globalCompositeOperation='destination-in';
+    const c0=P(0,0,0),rg=ctx.createRadialGradient(c0[0],c0[1],0,c0[0],c0[1],32*s);
+    rg.addColorStop(0,'rgba(0,0,0,1)');rg.addColorStop(.55,'rgba(0,0,0,.6)');rg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);ctx.restore();
+    poly([P(-PX+2,-PY+2,0),P(PX+3,-PY+2,0),P(PX+3,PY+3,0),P(-PX+2,PY+3,0)],C.ink,.06*clamp(S.h/6));
+
+    const h=S.h, rev=z=>ease((S.scan-z)/8)*S.dA, det=z=>clamp((S.scan-z)/3)*S.dA;
+    // podium
+    const extents=[];
+    if(h>0){
+      const d0=det(0),d1=det(PF);
+      if(d0<=0&&d1<=0){const zt=Math.min(PH,h);extents.push({zb:0,zt,cn:prism(PX,PY,0,0,zt,0,3.4,1)})}
+      else{const z1=Math.min(PF,h);extents.push({zb:0,zt:z1,cn:prism(PX,PY,0,0,z1,d0,3.4,h<=PF?1:d0)});
+        if(h>PF){const z2=Math.min(PH,h);extents.push({zb:PF,zt:z2,cn:prism(PX,PY,0,PF,z2,d1,3.4,1)})}}
+    }
+    // tower storeys; untouched ones are drawn as one plain block
+    let k=0;
+    for(;k<N;k++){
+      const zb=PH+k*FH; if(h<=zb) break;
+      const zt=Math.min(zb+FH,h), r=rev(zb), d=det(zb);
+      if(r<=0&&d<=0) break;
+      extents.push({zb,zt,cn:prism(R,R,TW*(k/(N-1))*r,zb,zt,d,2.3,zt>=h-.01?1:d)});
+    }
+    if(k<N&&h>PH+k*FH){const zb=PH+k*FH;extents.push({zb,zt:h,cn:prism(R,R,0,zb,h,0,2.3,1)})}
+
+    // roof parapet
+    const cr=clamp((S.scan-TOP-2)/6)*S.dA;
+    if(cr>0){
+      const cn=corners(R-.7,R-.7,TW).map(p=>P(p[0],p[1],TOP+1.1*cr));
+      strokeP(cn,C.acc,1,.8*cr);
+    }
+
+    // check plane
+    if(S.stage===1&&S.scan<=TOP+.5){
+      const z=S.scan, ex=z<PH?PX+4:R+6, ey=z<PH?PY+4:R+6;
+      const pl=[P(-ex,-ey,z),P(ex,-ey,z),P(ex,ey,z),P(-ex,ey,z)];
+      poly(pl,C.acc,.13);strokeP(pl,C.acc,1,.6);
+    }
+
+    // call-outs
+    const rightAt=z=>{let e=extents.find(x=>z>=x.zb&&z<=x.zt+.01)||extents[extents.length-1];if(!e||!e.cn)return null;let b=null;e.cn.forEach(c=>{const p=P(c[0],c[1],z);if(!b||p[0]>b[0])b=p});return b};
+    let maxX=-1e9;extents.forEach(e=>{if(e.cn)e.cn.forEach(c=>{maxX=Math.max(maxX,P(c[0],c[1],0)[0])})});
+    const lx=Math.min(maxX+24,W-labelW-4);
+    const clampY=y=>Math.min(H-24,Math.max(22,y));
+    const smooth=t=>{t=clamp(t);return t*t*(3-2*t)};
+    // ap: how far the tag has appeared (0..1) — eases the opacity and slides the label in from the left
+    function tag(z,set,val,ap,live,minY){
+      const e=smooth(ap), al=e*S.dA; if(al<=0)return;
+      const anc=rightAt(z);if(!anc)return;
+      const ly=Math.max(clampY(anc[1]),minY||0), x=lx-(1-e)*14;
+      ctx.font=FM;const w=Math.max(ctx.measureText(val).width,(ctx.font=FS,ctx.measureText(set).width))+22;
+      line(anc,[x,ly],C.ink,1,.45*al);
+      ctx.globalAlpha=al;ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(anc[0],anc[1],2.4,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=C.paper;ctx.fillRect(x,ly-18,w,36);
+      ctx.strokeStyle=live?C.acc:C.line;ctx.lineWidth=1;ctx.strokeRect(x+.5,ly-17.5,w-1,35);
+      ctx.fillStyle=C.acc;ctx.fillRect(x,ly-18,2,36);
+      ctx.textBaseline='middle';
+      ctx.font=FS;ctx.fillStyle=C.muted;ctx.fillText(set,x+11,ly-7);
+      ctx.font=FM;ctx.fillStyle=C.ink;ctx.fillText(val,x+11,ly+8);
+    }
+    TAGS.forEach(g=>tag(g.z,g.set,g.val,g.z>=TOP?(S.scan-TOP)/14:(S.scan-g.z-6)/14,false));
+    // live storey tag rides with the plane, then stays on the top storey;
+    // its label keeps a clear gap below the roof tag, the leader angles up instead
+    if(S.scan>0){
+      let idx,el;if(S.scan<PF){idx=1;el=0}else if(S.scan<PH){idx=2;el=PF}else{const kk=Math.min(N-1,Math.floor((S.scan-PH)/FH));idx=3+kk;el=PH+kk*FH}
+      const roof=rightAt(TOP), floorY=roof?clampY(roof[1])+62:0;
+      tag(Math.min(S.scan,TOP-FH*.5),'IfcBuildingStorey · '+idx,'Elevation = +'+el.toFixed(3),S.scan/8,true,floorY);
+    }
+
+    ctx.globalAlpha=1;
+  }
+
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let start=0,vis=true,now=0;
+  size();frame(0,0);
+  addEventListener('resize',()=>{size();frame(now,0)});
+  if('IntersectionObserver' in window)new IntersectionObserver(e=>{vis=e[0].isIntersecting}).observe(cv);
+  if(!reduce){const loop=t=>{if(!start)start=t;if(vis){now=t-start;frame(now,.25*Math.sin(now*.0002))}requestAnimationFrame(loop)};requestAnimationFrame(loop)}
+})();
+</script>
+</body>
+</html>
